@@ -1,23 +1,36 @@
-import logo from './logo.svg';
 import './App.css';
+import { useState, useEffect } from 'react';
+import ListRepos from './components/ListRepos';
+import WithAuthExample from './components/WithAuthExample';
+import Location from './components/Location';
+// import WithLoading from './components/HOCLoading';
+
+// const ListReposLoading = WithLoading(ListRepos);
 
 function App() {
+  const [loading, setLoading] = useState(false);
+  const [repos, setRepos] = useState([]);
+
+
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      fetch(`https://api.github.com/users/yyogesh/repos`)
+        .then((json) => json.json())
+        .then((repos) => {
+          setLoading(false);
+          setRepos(repos);
+        });
+    }, 2000);
+  }, [])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ListRepos repos={repos} isLoading={loading} />
+
+      <WithAuthExample isAuthenticated={true} />
+
+      <Location />
     </div>
   );
 }
